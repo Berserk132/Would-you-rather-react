@@ -1,10 +1,20 @@
 import React, { Component } from "react"
 import { connect } from "react-redux"
 import UserLeaderBoard from "./UserLeaderBoard"
+import {Redirect, withRouter} from "react-router-dom";
 
 
 class LeaderBoard extends Component {
   render() {
+
+    if (this.props.authedUser === "") {
+    
+      return <Redirect to={{
+        pathname:`/signin`,
+        state:{from:this.props.location}
+      }} />;
+    }
+
 
     const { users, result } = this.props;
     console.log(result);
@@ -51,4 +61,4 @@ function mapStateToProps({ authedUser, questions, users }) {
   };
 }
 
-export default connect(mapStateToProps)(LeaderBoard);
+export default connect(mapStateToProps)(withRouter(LeaderBoard));

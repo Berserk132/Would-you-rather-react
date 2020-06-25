@@ -15,6 +15,8 @@ class AddQuestion extends Component {
         this.toHome = false
     }
 
+    
+
     onClickHandler = () => {
         const {dispatch} = this.props
 
@@ -22,6 +24,17 @@ class AddQuestion extends Component {
         this.toHome = true
     };
     render() {
+
+        if (this.props.authedUser === "") {
+          return (
+            <Redirect
+              to={{
+                pathname: `/signin`,
+                state: { from: this.props.location },
+              }}
+            />
+          );
+        }
 
         if (this.toHome === true) {
           return <Redirect to="/" />;

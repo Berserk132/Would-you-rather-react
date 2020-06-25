@@ -3,45 +3,54 @@ import { connect } from "react-redux";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { setAuthedUser, LOG_OUT } from "../actions/authedUser";
-import { Redirect } from "react-router-dom";
+import { Redirect, withRouter} from "react-router-dom";
 
 const defaultSelect = "Select...";
 
+
 class SignIn extends Component {
+  
   constructor(props) {
     super(props);
     this.selected = ""
     this.selected = defaultSelect;
+    
   }
 
-    handleSubmit = (event) => {
+    
+
+  render() {
+    const { from } = this.props.location.state || { from: { pathname: "/" } };
+
+    console.log(from)
+
+    const handleSubmit = (event) => {
       event.preventDefault();
       if (this.selected === defaultSelect) alert("Please Select a user");
       else {
         const { dispatch } = this.props;
         dispatch(setAuthedUser(this.selected));
-        this.props.history.push(`/`);
+        
       }
     };
 
-    handleChange = (event) => {
+    const handleChange = (event) => {
       this.selected = event.target.value;
     };
 
-  render() {
 
     if (this.props.authedUser !== LOG_OUT) {
-      return <Redirect to="/" />;
+      return <Redirect to={from.pathname} />;
     }
     return (
         <div>
             <h1>Hello</h1>
-          <Form onSubmit={this.handleSubmit}>
+          <Form onSubmit={handleSubmit}>
             <Form.Group controlId="formGridState">
               <Form.Label>Choose User</Form.Label>
               <Form.Control
                 as="select"
-                onChange={this.handleChange}
+                onChange={handleChange}
                 value={this.selected.value}
               >
                 <option key="default" value={defaultSelect}>
@@ -65,10 +74,13 @@ class SignIn extends Component {
 
 
 function mapStateToProps({ users, authedUser }) {
+
+  
+
   return {
     authedUser,
     usersIds: Object.keys(users),
   };
 }
 
-export default connect(mapStateToProps)(SignIn);
+export default connect(mapStateToProps)(withRouter(SignIn));

@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from "react";
-import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
 import {handleInitialData} from '../actions/shared'
 import { connect } from "react-redux";
 import LoadingBar from "react-redux-loading";
@@ -9,10 +9,12 @@ import LeaderBoard from "./LeaderBoard";
 import AddQuestion from "./questions/AddQuestion";
 import NavBar from './Nav'
 import SignIn from "./SignIn";
+import NoMatch from './NoMatch'
 
 
 
 
+const NotFoundRedirect = () => <Redirect to="/not-found" />;
 
 
 class App extends Component {
@@ -31,13 +33,8 @@ class App extends Component {
             <NavBar />
             <LoadingBar />
             <div className="container">
-              {this.props.loading === true ? (
-                <div>
-                  <Route path="/signin" component={SignIn}/>
-                  <Redirect to="/signin"/>
-                </div>
-              ) : (
-                <div>
+              <div>
+                <Switch>
                   <Route path="/" exact component={Home} />
                   <Route
                     path="/question/:id"
@@ -46,8 +43,10 @@ class App extends Component {
                   <Route path="/leaderboard" component={LeaderBoard} />
                   <Route path="/add" component={AddQuestion} />
                   <Route path="/signin" component={SignIn} />
-                </div>
-              )}
+                  <Route path="/not-found" component={NoMatch} />
+                  <Route component={NotFoundRedirect} />
+                </Switch>
+              </div>
             </div>
           </Fragment>
         </Router>

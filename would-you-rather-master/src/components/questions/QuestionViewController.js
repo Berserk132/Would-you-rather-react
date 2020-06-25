@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import checkQuestions from "../../utils/helper";
 import UnansweredQuestion from "./UnansweredQuestion";
 import AnsweredQuestion from "./AnsweredQuestion";
-
+import {Redirect} from 'react-router-dom';
 
 class QuestionViewController extends Component {
     
@@ -11,12 +11,29 @@ class QuestionViewController extends Component {
 
     render() {
 
+
+        if (this.props.authedUser === "") {
+          return (
+            <Redirect
+              to={{
+                pathname: `/signin`,
+                state: { from: this.props.location },
+              }}
+            />
+          );
+        }
+
         const {
           isQuestionNotAnswered,
           voteOne,
           voteTwo,
           authedUserAnswer,
         } = this.props;
+
+
+        if (voteOne === null || voteTwo === null) {
+          return <Redirect to={`/not-found`} />;
+        }
 
         return (
           <div>
@@ -38,18 +55,26 @@ class QuestionViewController extends Component {
 function mapStateToProps({authedUser, questions, users},  props ) {
     
     const { id } = props.match.params;
+    let isQuestionNotAnswered = null
+    let voteOne = null;
+    let voteTwo = null;
+    let authedUserAnswer = null;
+    
+    if (questions[id] !== undefined){
 
-    const isQuestionNotAnswered = checkQuestions(questions[id], authedUser)
+      isQuestionNotAnswered = checkQuestions(questions[id], authedUser);
 
-    // get the number of votes for every option 
-    // vote one
-    const voteOne = questions[id].optionOne.votes.length
+      // get the number of votes for every option
+      // vote one
+       voteOne = questions[id].optionOne.votes.length;
 
-    // vote two
-    const voteTwo = questions[id].optionTwo.votes.length
+      // vote two
+       voteTwo = questions[id].optionTwo.votes.length;
 
-    // the answer of authedUser
-    const authedUserAnswer = users[authedUser].answers[id]
+      // the answer of authedUser
+       authedUserAnswer = users[authedUser].answers[id];
+    }
+    
     
     return {
       id,
